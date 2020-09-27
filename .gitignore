@@ -1,0 +1,29 @@
+*.99
+*.cmd
+*.dwo
+*.o
+*.exe
+*.ko
+mca/
+.tmp_versions/
+obj/
+mca.depend
+mca.layout
+Module.symvers
+logibone_fifo.mod.c
+modules.order
+Backups/
+CachedData/
+CachedExtensions/
+Cookies
+Cookies-journal
+Network Persistent State
+User/
+languagepacks.json
+logs/
+machineid
+rapid_render.json
+storage.json
+Cache/
+Code Cache/
+GPUCache/
