@@ -134,6 +134,7 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
 {
     int ret;
     pr_info("A device is detected\r\n");
+#if 0
     struct device *dev = &pdev->dev;
     struct pcdev_private_data *dev_data;
     struct pcdev_platform_data *pdata;
@@ -212,19 +213,22 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
 
     pcdrv_data.total_devices++;
     pr_info("pcd device is probed\n");
+#endif
     return 0;
 }
 
 int pcd_platform_driver_remove(struct platform_device *pdev)
 {
-    struct pcdev_private_data *dev_data = dev_get_drvdata(&pdev->dev);
     pr_info("pcd device is removed\n");
+ #if 0
+    struct pcdev_private_data *dev_data = dev_get_drvdata(&pdev->dev);
     /* remove device created */
     device_destroy(pcdrv_data.class_pcd, dev_data->dev_num);
     /* remove cdev entry */
     cdev_del(&dev_data->cdev);
     pcdrv_data.total_devices--;
     dev_info(&pdev->dev, "device is removed\r\n");
+#endif
     return 0;
 }
 

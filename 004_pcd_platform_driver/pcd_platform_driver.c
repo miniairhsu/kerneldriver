@@ -121,6 +121,10 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     }
     /* save device private data pointer in platform device structure 
        so can be used later
+       static inline void dev_set_drvdata(struct device *dev, void *data)
+       { 
+            dev->driver_data = data;
+       }
     */
     dev_set_drvdata(&pdev->dev, dev_data);
     dev_data->pdata.size = pdata->size;

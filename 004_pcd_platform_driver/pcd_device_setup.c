@@ -22,7 +22,7 @@ struct platform_device platform_device_1 = {
     .id   = 0,
     .dev  = {
         .platform_data = &pcdev_pdata[0],
-        .release       = pcdev_release
+        .release       = pcdev_release 
     }
 };
 
