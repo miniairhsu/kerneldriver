@@ -3,7 +3,7 @@
 
 /{
     fragment@0 {
-        target = <&pcdev1>;
+        target = <&pcdev1>; 
         __OVERLAY__ {
             status = "disabled"; 
         };

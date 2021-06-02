@@ -1,0 +1,11 @@
+console=ttyO0,115200n8
+ovenvsetup= setenv fdaddr=0x87f00000; setenv fdtovaddr 0x87fc0000;
+fdtload=load mmc 0:1 ${fdtaddr} am335x-bonegreen.dtb;load mmc 0:2 ${fdtovaddr} /root/home/
+
+
+loadaddr=0x80008000
+fdtaddr=0x82000000
+loadfromsd=load mmc 0:1 ${loadaddr} uImage;load mmc 0:1 ${fdtaddr} am335x-bonegreen.dtb
+linuxbootargs=setenv bootargs console=${console} root=/dev/mmcblk0p2 rw 
+uenvcmd=setenv autoload no; run loadfromsd; run linuxbootargs; bootm ${loadaddr} - ${fdtaddr}
+

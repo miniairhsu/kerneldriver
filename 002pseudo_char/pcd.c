@@ -130,7 +130,8 @@ static int __init pcd_module_init(void)
         goto cdev_del;
     }
 
-    //device file populate device information undr sys/class/pcd_class
+    //device file populate device information undr sys/class/pcd_class, this populate device 
+    //number to user space
     device_pcd = device_create(class_pcd, NULL, device_number, NULL, "pcd");
     if(IS_ERR(device_pcd)) {
          pr_err("device creation fail\n");

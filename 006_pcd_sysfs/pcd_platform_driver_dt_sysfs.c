@@ -1,47 +1,4 @@
-#include <linux/module.h>
-#include <linux/fs.h>
-#include <linux/cdev.h>
-#include <linux/device.h>
-#include <linux/kdev_t.h>
-#include <linux/uaccess.h>
-#include <linux/platform_device.h>
-#include <linux/slab.h>
-#include <linux/of.h>
-#include <linux/mod_devicetable.h>
-#include <linux/of_device.h>
-#include "platform.h"
-
-/* device data structure */
-struct pcdev_private_data
-{
-    struct pcdev_platform_data pdata;
-    char* buffer;
-    dev_t dev_num;
-    struct cdev cdev;
-};
-
-/* driver data structure */
-struct pcdrv_private_data
-{
-    int total_devices;
-    dev_t device_num_base;
-    struct class *class_pcd;
-    struct device *device_pcd;
-};
-
-enum pcdev_names 
-{
-    PCDEVA1X,
-    PCDEVB1X,
-    PCDEVC1X,
-    PCDEVD1X
-};
-/* configuration item to config device */
-struct device_config
-{
-    int config_item1;
-    int config_item2;
-};
+#include "pcd_platform_driver_dt_sysfs.h"
 
 struct device_config pcdev_config[] = 
 {
@@ -52,42 +9,9 @@ struct device_config pcdev_config[] =
 }; 
 
 struct pcdrv_private_data pcdrv_data;
-int check_permission(int dev_perm, int acc_mode)
-{
-    if(dev_perm == RDWR)
-        return 0;
-    if(dev_perm == RDONLY && ( (acc_mode & FMODE_READ) && !(acc_mode & FMODE_WRITE)) )
-        return 0;
-    if(dev_perm == WRONLY && ( (acc_mode & FMODE_WRITE) && !(acc_mode & FMODE_READ)) )
-        return 0;
-    return -EPERM;
-}
 
-int pcd_open(struct inode *inode, struct file *filp)
-{
-    return 0;
-}
 
-int pcd_release(struct inode *inode, struct file *filp)
-{
-    pr_info("release requsted\r\n");
-    return 0;
-}
 
-ssize_t pcd_read(struct file* filp, char __user *buff, size_t count, loff_t *f_pos)
-{
-    return 0;
-}
-
-ssize_t pcd_write(struct file* filp, const char __user *buff, size_t count, loff_t *f_pos)
-{
-    return -ENOMEM;
-}
-
-loff_t pcd_lseek(struct file *filp, loff_t offset, int whence)
-{
-    return 0;
-}
 struct file_operations pcd_fops = {
     .open    = pcd_open, 
     .write   = pcd_write,
@@ -96,8 +20,62 @@ struct file_operations pcd_fops = {
     .release = pcd_release,
     .owner   = THIS_MODULE
 };
-#undef pr_mt
-#define pr_fmt(fmt) "%s:" fmt,__func__ 
+
+
+ssize_t show_max_size(struct device *dev, struct device_attribute *attr, char *buf) 
+{
+    struct pcdev_private_data *dev_data = dev_get_drvdata(dev->parent); 
+    return sprintf(buf, "%d\n", dev_data->pdata.size);
+}
+
+ssize_t show_serial_num(struct device *dev, struct device_attribute *attr, char *buf) 
+{
+    /* access to device private data */
+    struct pcdev_private_data *dev_data = dev_get_drvdata(dev->parent); //class device parent instentiate from device tree
+    return sprintf(buf, "%s\n", dev_data->pdata.serial_number);
+}
+
+ssize_t store_max_size(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+    //convert string to long
+    long result;
+    int ret;
+    struct pcdev_private_data *dev_data = dev_get_drvdata(dev->parent);
+    ret = kstrtol(buf, 10, &result); //base 10, convert buf to result 
+    if(ret)
+        return ret;
+    dev_data->pdata.size = result;
+    dev_data->buffer = krealloc(dev_data->buffer, dev_data->pdata.size, GFP_KERNEL);
+    return count;
+}
+/* create device_attributes and populate its functions*/
+static DEVICE_ATTR(max_size, S_IRUGO|S_IWUSR, show_max_size, store_max_size); //create dev_attr_max_size to be populate in sysfs 
+static DEVICE_ATTR(serial_num, S_IRUGO, show_serial_num, NULL); //create dev_attr_serial_num to be populated in sysfs 
+
+/* collect attributes */
+struct attribute *pcd_attrs[] = {
+    &dev_attr_max_size.attr,
+    &dev_attr_serial_num.attr,
+    NULL
+};
+struct attribute_group pcd_attr_group = {
+    .attrs = pcd_attrs
+};
+
+/* create attributes in sysfs dir */
+int pcd_sysfs_create_files(struct device *pcd_dev) 
+{
+    int ret;
+//populate attributes on at a time
+#if 0
+    ret = sysfs_create_file(&pcd_dev->kobj, &dev_attr_max_size.attr);
+    if(ret)
+        return ret;
+    ret = sysfs_create_file(&pcd_dev->kobj, &dev_attr_serial_num.attr);
+#endif
+    return sysfs_create_group(&pcd_dev->kobj, &pcd_attr_group);
+}
+
 struct pcdev_platform_data* pcdev_get_platdata_from_dt(struct device *dev)
 {
     //DT node
@@ -212,9 +190,17 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     }
 
     pcdrv_data.total_devices++;
+    ret = pcd_sysfs_create_files(pcdrv_data.device_pcd);
+    if(ret) {
+        device_destroy(pcdrv_data.class_pcd, dev_data->dev_num);
+        return ret;
+    }
+
     pr_info("pcd device is probed\n");
     return 0;
 }
+
+
 
 int pcd_platform_driver_remove(struct platform_device *pdev)
 {
