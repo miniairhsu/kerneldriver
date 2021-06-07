@@ -48,7 +48,7 @@ ssize_t store_max_size(struct device *dev, struct device_attribute *attr, const 
     dev_data->buffer = krealloc(dev_data->buffer, dev_data->pdata.size, GFP_KERNEL);
     return count;
 }
-/* create device_attributes and populate its functions*/
+/* create device_attributes and populate its functions, create dev_attr_max_size*/
 static DEVICE_ATTR(max_size, S_IRUGO|S_IWUSR, show_max_size, store_max_size); //create dev_attr_max_size to be populate in sysfs 
 static DEVICE_ATTR(serial_num, S_IRUGO, show_serial_num, NULL); //create dev_attr_serial_num to be populated in sysfs 
 

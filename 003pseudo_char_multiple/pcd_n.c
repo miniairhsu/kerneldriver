@@ -231,7 +231,7 @@ static int __init pcd_module_init(void)
        
 
         //device file populate device information 
-        pcdrv_data.device_pcd = device_create( pcdrv_data.class_pcd, NULL, pcdrv_data.device_number+i, NULL, "pcdev-%d", i+1);
+        pcdrv_data.device_pcd = device_create( pcdrv_data.class_pcd, NULL, pcdrv_data.device_number+i, NULL, "pcdevn-%d", i+1);
         if(IS_ERR(pcdrv_data.device_pcd)) {
             pr_err("device creation fail\n");
             ret = PTR_ERR(pcdrv_data.device_pcd);

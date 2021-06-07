@@ -106,6 +106,7 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     struct pcdev_platform_data *pdata;
     pr_info("A device is detected\r\n");
     /* get platform data */
+    //pdata = pded->dev.platform_data
     pdata = (struct pcdev_platform_data *)dev_get_platdata(&pdev->dev);
     if(!pdata) {
         pr_info("No platform data available\r\n");
@@ -114,6 +115,7 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     }
 
     /* allocate memory for device private data */
+    //dev_data = kzalloc(sizeof(struct pcdev_private_data), GPL_KERNEL));
     dev_data = devm_kzalloc(&pdev->dev, sizeof(struct pcdev_private_data), GFP_KERNEL);
     if(!dev_data) {
         pr_info("Cannot allocate memory\r\n");
@@ -126,6 +128,7 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
             dev->driver_data = data;
        }
     */
+   //pdev->driver_data = dev_data;
     dev_set_drvdata(&pdev->dev, dev_data);
     dev_data->pdata.size = pdata->size;
     dev_data->pdata.perm = pdata->perm;
@@ -134,6 +137,7 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     pr_info("Device size %d\r\n", dev_data->pdata.size);
     pr_info("Device permission %d\r\n", dev_data->pdata.perm);
     /* find device config data from platform_device */
+    pr_info("driver name = %s\r\n", pdev->id_entry->name);
     pr_info("config item 1 = %d\r\n", pcdev_config[pdev->id_entry->driver_data].config_item1);
     pr_info("config item 2 = %d\r\n", pcdev_config[pdev->id_entry->driver_data].config_item2);
     /*allocate memory for device buffer */

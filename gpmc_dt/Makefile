@@ -1,6 +1,4 @@
-obj-m := pcd_sysfs.o #final .ko file
-#dependencies of pcd_sysfs.ko
-pcd_sysfs-objs += pcd_platform_driver_dt_sysfs.o pcd_syscalls.o
+obj-m := gpmc_fpga_dt.o
 ARCH=arm
 #KERNELDIR ?= /home/arm/bbb-debian2/linux
 KERNELDIR ?= /home/arm/bbb-debian3/bb-kernel/KERNEL

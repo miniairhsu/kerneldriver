@@ -143,6 +143,7 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     struct of_device_id *match;
     dev_info(dev, "A device is detected\r\n");
     /* check if Linux supports device tree CONFIG_OF is yes */
+    //match = of_match_device(pdev->dev.driver->of_match_table, dev);
     match = of_match_device(of_match_ptr(org_pcdev_dt_match), dev);
     if (match) {
         pdata = pcdev_get_platdata_from_dt(dev);

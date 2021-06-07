@@ -1,0 +1,27 @@
+/ {
+	gpmc_fpga:gpmc-fpga@50000000 {
+		compatible = "GPMC-FPGA";
+        fpga,block-size = <512>;
+        fpga,device-serial-num = "GPMC1";
+        fpga,block-size = <16777216>;
+		fpga,gpmc-reg = <0x50000000 0xFFFFFF>;
+		fpga,gpmc-sysconf-offset = <0x10>; 
+		fpga,gpmc-conf1-n = <0x60 0x30>; /* offset */
+		fpga,gpmc-conf2-n = <0x64 0x30>;  /* offset */
+		fpga,gpmc-conf3-n = <0x68 0x30>;  /* offset */
+		fpga,gpmc-conf4-n = <0x6c 0x30>;  /* offset */
+		fpga,gpmc-conf5-n = <0x70 0x30>;  /* offset */
+		fpga,gpmc-conf6-n = <0x74 0x30>;  /* offset */
+		fpga,gpmc-conf7-n = <0x78 0x30>;  /* offset */
+		fpga,ctrl-reg = <0x44E10000>;
+		fpga,ctrl-adn-offset = <0x800>; /*0x10 address pins mode rx enable*/
+		fpga,ctrl-csn-offset = <0x87C>; /*7 cs pins total mode */
+		fpga,ctrl-wen-offset = <0x898>; /*mode */ 
+		fpga,ctrl-advn-offset = <0x890>; /*mode */ 
+		fpga,ctrl-oen-offset = <0x894>; /*mode */ 
+		fpga,ctrl-be0-offset = <0x89C 0x0>; /*mode */ 
+		fpga,ctrl-be1-offset = <0x878 0x0>; /*mode */ 
+		fpga,gpmc-cs-num = <7>; 
+		fpga,gpmc-cs = <1 0 1 0 0 0 0>; 
+    	};
+};
